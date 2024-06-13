@@ -1,23 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>음식 추천 앱</title>
     <style>
-        .background-container {
-            width: 960px; /* 원하는 이미지 크기로 조정 */
-            height: 450px;
-            background-image: url('https://a-v2.sndcdn.com/assets/images/sc_landing_header_web_featured_artists-8081257b.jpg');
-            background-repeat: no-repeat;
-            background-size: cover;
-            padding: 20px; /* 이미지 주위에 여백 추가 */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f8f9fa;
+            margin: 0;
         }
+        .container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn.selected {
+            background-color: #28a745;
+        }
+        .recommendation {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        #selectedInfo {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+        }
+        
     </style>
 </head>
 <body>
-    <div class="background-container">
-        <!-- 내용 -->
+    <div class="container">
+        <h1>음식 종류 선택</h1>
+        <div>
+            <button class="btn food-type" id="일식" onclick="selectFoodType('일식')">일식</button>
+            <button class="btn food-type" id="한식" onclick="selectFoodType('한식')">한식</button>
+            <button class="btn food-type" id="중식" onclick="selectFoodType('중식')">중식</button>
+            <button class="btn food-type" id="양식" onclick="selectFoodType('양식')">양식</button>
+            <button class="btn food-type" id="아시아음식" onclick="selectFoodType('아시아음식')">아시아음식</button>
+            <button class="btn food-type" id="전체" onclick="selectFoodType('전체')">전체</button>
+        </div>
+        
+        <div id="recommendContainer" class="hidden">
+            <h1>식사 유형 선택</h1>
+            <div>
+                <button class="btn occasion" id="점심" onclick="selectOccasion('점심')">점심</button>
+                <button class="btn occasion" id="저녁" onclick="selectOccasion('저녁')">저녁</button>
+                <button class="btn occasion" id="간식" onclick="selectOccasion('간식')">간식</button>
+                <button class="btn occasion" id="전체" onclick="selectOccasion('전체')">전체</button>
+            </div>
+            <button id="recommendBtn" class="btn" onclick="recommendFood()">추천 메뉴 보기</button>
+        </div>
+        
+        <div id="selectedInfo" class="hidden">
+            <p id="selectedFoodType"></p>
+            <p id="selectedOccasion"></p>
+        </div>
+        
+        <div class="recommendation" id="recommendation"></div>
+        <div class="recommendation-container">
+            <p class="recommendation-text" id="recommendation"></p>
+        </div>
     </div>
+
+    <script>
+        let selectedFoodType = null;
+        let selectedOccasion = null;
+
+        function selectFoodType(foodType) {
+            selectedFoodType = foodType;
+            document.getElementById('selectedFoodType').innerText = '선택한 음식 종류: ' + foodType;
+            document.getElementById('recommendContainer').classList.remove('hidden');
+            document.getElementById('selectedInfo').classList.remove('hidden');
+            
+            // 모든 음식 유형 버튼의 선택 해제
+            const foodTypeButtons = document.querySelectorAll('.btn.food-type');
+            foodTypeButtons.forEach(button => button.classList.remove('selected'));
+            
+            // 선택한 음식 유형 버튼 색상 변경
+            document.getElementById(foodType).classList.add('selected');
+        }
+
+        function selectOccasion(occasion) {
+            selectedOccasion = occasion;
+            document.getElementById('selectedOccasion').innerText = '선택한 식사 유형: ' + occasion;
+            
+            // 모든 식사 유형 버튼의 선택 해제
+            const occasionButtons = document.querySelectorAll('.btn.occasion');
+            occasionButtons.forEach(button => button.classList.remove('selected'));
+            
+            // 선택한 식사 유형 버튼 색상 변경
+            document.getElementById(occasion).classList.add('selected');
+        }
+
+        function recommendFood() {
+            if (selectedFoodType && selectedOccasion) {
+                const recommendations = {
+                    '일식': {
+                        '점심': ['스시', '라멘', '카츠 카레'],
+                        '저녁': ['덴푸라', '야키토리', '스키야키'],
+                        '간식': ['오니기리', '타코야키', '모찌'],
+                        '전체': ['스시', '라멘', '카츠 카레', '덴푸라', '야키토리', '스키야키', '오니기리', '타코야키', '모찌']
+                    },
+                    '한식': {
+                        '점심': ['비빔밥', '김치찌개', '불고기'],
+                        '저녁': ['삼겹살', '갈비찜', '닭갈비'],
+                        '간식': ['떡볶이', '호떡', '붕어빵'],
+                        '전체': ['비빔밥', '김치찌개', '불고기', '삼겹살', '갈비찜', '닭갈비', '떡볶이', '호떡', '붕어빵']
+                    },
+                    '중식': {
+                        '점심': ['짜장면', '짬뽕', '탕수육'],
+                        '저녁': ['북경오리', '마라탕', '양장피'],
+                        '간식': ['춘권', '딤섬', '바오즈'],
+                        '전체': ['짜장면', '짬뽕', '탕수육', '북경오리', '마라탕', '양장피', '춘권', '딤섬', '바오즈']
+                    },
+                    '양식': {
+                        '점심': ['햄버거', '샌드위치', '파스타'],
+                        '저녁': ['스테이크', '라자냐', '리조또'],
+                        '간식': ['감자튀김', '브라우니', '치즈케이크'],
+                        '전체': ['햄버거', '샌드위치', '파스타', '스테이크', '라자냐', '리조또', '감자튀김', '브라우니', '치즈케이크']
+                    },
+                    '아시아음식': {
+                        '점심': ['팟타이', '나시고랭', '쌀국수'],
+                        '저녁': ['카레', '비프렌당', '똠얌꿍'],
+                        '간식': ['바나나 튀김', '망고 찹쌀밥', '반미'],
+                        '전체': ['팟타이', '나시고랭', '쌀국수', '카레', '비프렌당', '똠얌꿍', '바나나 튀김', '망고 찹쌀밥', '반미']
+                    },
+                    '전체': {
+                        '점심': ['스시', '비빔밥', '짜장면', '햄버거', '팟타이'],
+                        '저녁': ['덴푸라', '삼겹살', '북경오리', '스테이크', '카레'],
+                        '간식': ['오니기리', '떡볶이', '춘권', '감자튀김', '바나나 튀김'],
+                        '전체': ['스시', '비빔밥', '짜장면', '햄버거', '팟타이', '덴푸라', '삼겹살', '북경오리', '스테이크', '카레', '오니기리', '떡볶이', '춘권', '감자튀김', '바나나 튀김']
+                    }
+                };
+
+                const randomRecommendation = recommendations[selectedFoodType][selectedOccasion][Math.floor(Math.random() * recommendations[selectedFoodType][selectedOccasion].length)];
+                document.getElementById('recommendation').innerText = '추천 메뉴: ' + randomRecommendation;
+            } else {
+                document.getElementById('recommendation').innerText = '음식 종류와 식사 유형을 모두 선택해 주세요.';
+            }
+        }
+    </script>
 </body>
 </html>
